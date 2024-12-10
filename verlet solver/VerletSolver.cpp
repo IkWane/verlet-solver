@@ -12,6 +12,7 @@ void VerletSolver::update(float deltaTime, uint8_t substeps)
 	for (uint8_t i = 0; i < substeps; i++)
 	{
 		apply_gravity();
+		solve_collisions();
 		update_positions(deltaTime / substeps);
 		apply_constraint();
 	}
@@ -24,6 +25,11 @@ void VerletSolver::render(sf::RenderWindow* window, sf::CircleShape* ball_shape)
 		ball_shape->setPosition(ball.position);
 		window->draw(*ball_shape);
 	}
+}
+
+uint32_t VerletSolver::get_ball_count()
+{
+	return this->ball_count;
 }
 
 void VerletSolver::remove_ball(uint32_t index)
@@ -66,6 +72,24 @@ void VerletSolver::apply_constraint()
 		{
 			sf::Vector2f norm = vec / sqrt(vec.x * vec.x + vec.y * vec.y);
 			this->ball_list[i].position = conf::constraint_center + norm * (conf::constraint_radius - conf::circle_radius);
+		}
+	}
+}
+
+void VerletSolver::solve_collisions()
+{
+	for (uint32_t i = 0; i < this->ball_count; i++)
+	{
+		for (uint32_t j = i + 1; j < this->ball_count; j++)
+		{
+			sf::Vector2f vec = this->ball_list[i].position - this->ball_list[j].position;
+			float dist = sqrt(vec.x * vec.x + vec.y * vec.y) - conf::circle_radius * 2;
+			if (dist < 0)
+			{
+				sf::Vector2f displacement = vec / (dist + conf::circle_radius * 2) * dist;
+				this->ball_list[i].position -= 0.5f * displacement;
+				this->ball_list[j].position += 0.5f * displacement;
+			}
 		}
 	}
 }
