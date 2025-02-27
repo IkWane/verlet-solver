@@ -133,11 +133,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollisionGrid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VerletSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ball.hpp" />
+    <ClInclude Include="CollisionGrid.hpp" />
     <ClInclude Include="configuraton.hpp" />
     <ClInclude Include="VerletSolver.hpp" />
   </ItemGroup>
